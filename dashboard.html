@@ -898,6 +898,89 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Pipeline API Endpoints -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('pipeline-status')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method">GET</span>
+                            <span class="endpoint-path">/api/pipeline/status</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="pipeline-status-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary"
+                                onclick="testEndpoint('/api/pipeline/status', 'pipeline-status-response')">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                            <button class="btn"
+                                onclick="window.open('http://127.0.0.1:8080/api/pipeline/status', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </button>
+                        </div>
+                        <div id="pipeline-status-response" class="response-container">
+                            Click "Execute" to test this endpoint
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('pipeline-trigger')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method" style="background: #da3633;">POST</span>
+                            <span class="endpoint-path">/api/pipeline/trigger</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="pipeline-trigger-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary" onclick="triggerPipelineFromAPI()">
+                                <i class="fas fa-rocket"></i> Trigger Pipeline
+                            </button>
+                        </div>
+                        <div id="pipeline-trigger-response" class="response-container">
+                            Click "Trigger Pipeline" to start a new CI/CD pipeline execution
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('pipeline-stages')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method">GET</span>
+                            <span class="endpoint-path">/api/pipeline/stages</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="pipeline-stages-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary"
+                                onclick="testEndpoint('/api/pipeline/stages', 'pipeline-stages-response')">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                            <button class="btn"
+                                onclick="window.open('http://127.0.0.1:8080/api/pipeline/stages', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </button>
+                        </div>
+                        <div id="pipeline-stages-response" class="response-container">
+                            Click "Execute" to test this endpoint
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -905,48 +988,68 @@
         <div id="pipeline" class="section" style="display: none;">
             <div class="header">
                 <h2><i class="fas fa-tasks"></i> CI/CD Pipeline</h2>
-            </div>
-
-            <div class="pipeline-stage">
-                <div class="stage-number complete">1</div>
-                <div class="stage-content">
-                    <div class="stage-title"><i class="fab fa-github"></i> Source Control</div>
-                    <div class="stage-desc">Code repository on GitHub with webhook integration</div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="triggerPipeline()" id="runPipelineBtn">
+                        <i class="fas fa-play"></i> Run Pipeline
+                    </button>
+                    <span id="pipelineStatusText" style="color: #8b949e; margin-left: 15px;"></span>
                 </div>
             </div>
 
-            <div class="pipeline-stage">
-                <div class="stage-number complete">2</div>
-                <div class="stage-content">
-                    <div class="stage-title"><i class="fas fa-hammer"></i> Build with Maven</div>
-                    <div class="stage-desc">Compile Java source code and run unit tests</div>
-                    <div class="loading-bar">
-                        <div class="loading-progress"></div>
+            <div id="pipelineStages">
+                <div class="pipeline-stage" id="stage-0">
+                    <div class="stage-number" id="stage-number-0">1</div>
+                    <div class="stage-content">
+                        <div class="stage-title"><i class="fab fa-github"></i> Source Control</div>
+                        <div class="stage-desc">Code repository on GitHub with webhook integration</div>
+                        <div class="loading-bar" id="progress-bar-0" style="display: none;">
+                            <div class="loading-progress" id="progress-0" style="width: 0%; animation: none;"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="pipeline-stage">
-                <div class="stage-number complete">3</div>
-                <div class="stage-content">
-                    <div class="stage-title"><i class="fab fa-docker"></i> Docker Containerization</div>
-                    <div class="stage-desc">Build optimized Docker image with multi-stage build</div>
+                <div class="pipeline-stage" id="stage-1">
+                    <div class="stage-number" id="stage-number-1">2</div>
+                    <div class="stage-content">
+                        <div class="stage-title"><i class="fas fa-hammer"></i> Build with Maven</div>
+                        <div class="stage-desc">Compile Java source code and run unit tests</div>
+                        <div class="loading-bar" id="progress-bar-1" style="display: none;">
+                            <div class="loading-progress" id="progress-1" style="width: 0%; animation: none;"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="pipeline-stage">
-                <div class="stage-number complete">4</div>
-                <div class="stage-content">
-                    <div class="stage-title"><i class="fas fa-cloud-upload-alt"></i> Push to Registry</div>
-                    <div class="stage-desc">Upload container image to Docker Hub</div>
+                <div class="pipeline-stage" id="stage-2">
+                    <div class="stage-number" id="stage-number-2">3</div>
+                    <div class="stage-content">
+                        <div class="stage-title"><i class="fab fa-docker"></i> Docker Containerization</div>
+                        <div class="stage-desc">Build optimized Docker image with multi-stage build</div>
+                        <div class="loading-bar" id="progress-bar-2" style="display: none;">
+                            <div class="loading-progress" id="progress-2" style="width: 0%; animation: none;"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="pipeline-stage">
-                <div class="stage-number complete">5</div>
-                <div class="stage-content">
-                    <div class="stage-title"><i class="fas fa-dharmachakra"></i> Deploy to Kubernetes</div>
-                    <div class="stage-desc">Rolling update deployment with zero downtime</div>
+                <div class="pipeline-stage" id="stage-3">
+                    <div class="stage-number" id="stage-number-3">4</div>
+                    <div class="stage-content">
+                        <div class="stage-title"><i class="fas fa-cloud-upload-alt"></i> Push to Registry</div>
+                        <div class="stage-desc">Upload container image to Docker Hub</div>
+                        <div class="loading-bar" id="progress-bar-3" style="display: none;">
+                            <div class="loading-progress" id="progress-3" style="width: 0%; animation: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage" id="stage-4">
+                    <div class="stage-number" id="stage-number-4">5</div>
+                    <div class="stage-content">
+                        <div class="stage-title"><i class="fas fa-dharmachakra"></i> Deploy to Kubernetes</div>
+                        <div class="stage-desc">Rolling update deployment with zero downtime</div>
+                        <div class="loading-bar" id="progress-bar-4" style="display: none;">
+                            <div class="loading-progress" id="progress-4" style="width: 0%; animation: none;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1112,6 +1215,25 @@
     <script>
         const BASE_URL = 'http://127.0.0.1:8080';
         let startTime = Date.now();
+        let isBackendOnline = false;
+        let demoMode = false;
+
+        // Demo data for when backend is offline
+        const demoData = {
+            health: { status: 'UP', timestamp: new Date().toISOString() },
+            info: {
+                application: 'DevOps CI/CD Demo',
+                version: '1.0.0',
+                environment: 'Development',
+                deployment: 'Kubernetes',
+                buildTime: '2025-12-16T01:20:00Z'
+            },
+            root: {
+                message: 'Welcome to DevOps CI/CD Pipeline API',
+                status: 'Running',
+                endpoints: ['/health', '/api/info']
+            }
+        };
 
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -1147,31 +1269,56 @@
             appLogs?.scrollTo(0, appLogs.scrollHeight);
         }
 
+        async function fetchWithFallback(url, demoDataKey) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    isBackendOnline = true;
+                    return { success: true, data: await response.json(), demo: false };
+                }
+                throw new Error('Response not OK');
+            } catch (error) {
+                if (!demoMode) {
+                    demoMode = true;
+                    addLog('Backend unavailable - switching to demo mode', 'warning');
+                }
+                return { success: true, data: demoData[demoDataKey], demo: true };
+            }
+        }
+
         async function testEndpoint(path, responseId) {
             const startTime = Date.now();
             addLog(`Testing endpoint: ${path}`, 'info');
 
-            try {
-                const response = await fetch(BASE_URL + path);
-                const data = await response.json();
-                const duration = Date.now() - startTime;
+            let demoKey = 'health';
+            if (path.includes('info')) demoKey = 'info';
+            if (path === '/') demoKey = 'root';
 
+            const result = await fetchWithFallback(BASE_URL + path, demoKey);
+            const duration = Date.now() - startTime;
+
+            if (result.success) {
+                const modeIndicator = result.demo ? '<span style="color: #d29922;">(Demo Mode)</span>' : '';
                 document.getElementById(responseId).innerHTML = `
                     <div style="color: #3fb950; margin-bottom: 10px;">
-                        <i class="fas fa-check-circle"></i> ${response.status} ${response.statusText} (${duration}ms)
+                        <i class="fas fa-check-circle"></i> 200 OK (${duration}ms) ${modeIndicator}
                     </div>
-                    <pre>${formatJSON(data)}</pre>
+                    <pre>${formatJSON(result.data)}</pre>
                 `;
-
-                addLog(`✓ ${path} responded in ${duration}ms`, 'success');
+                addLog(`✓ ${path} responded in ${duration}ms ${result.demo ? '(demo)' : ''}`, 'success');
                 document.getElementById('responseTime').textContent = duration + 'ms';
-            } catch (error) {
+            } else {
                 document.getElementById(responseId).innerHTML = `
                     <div style="color: #f85149;">
-                        <i class="fas fa-times-circle"></i> ${error.message}
+                        <i class="fas fa-times-circle"></i> Connection failed
                     </div>
                 `;
-                addLog(`✗ ${path} failed: ${error.message}`, 'error');
+                addLog(`✗ ${path} failed`, 'error');
             }
         }
 
@@ -1186,25 +1333,35 @@
         }
 
         async function refreshAll() {
-            try {
-                const response = await fetch(BASE_URL + '/health');
-                if (response.ok) {
-                    document.getElementById('appStatus').textContent = 'Running';
-                    const uptime = Math.floor((Date.now() - startTime) / 1000);
-                    document.getElementById('uptime').textContent = uptime + 's';
+            const result = await fetchWithFallback(BASE_URL + '/health', 'health');
 
-                    const info = await fetch(BASE_URL + '/api/info').then(r => r.json());
-                    document.getElementById('environment').textContent = info.environment || 'N/A';
-                    document.getElementById('version').textContent = info.version || 'N/A';
+            if (result.success) {
+                const statusText = result.demo ? 'Demo Mode' : 'Online';
+                const statusColor = result.demo ? '#d29922' : '#3fb950';
 
-                    addLog('Status refreshed successfully', 'success');
-                } else {
-                    throw new Error('Not responding');
+                document.getElementById('appStatus').innerHTML =
+                    `<span style="color: ${statusColor}">${statusText}</span>`;
+
+                const uptime = Math.floor((Date.now() - startTime) / 1000);
+                document.getElementById('uptime').textContent = uptime + 's';
+
+                const infoResult = await fetchWithFallback(BASE_URL + '/api/info', 'info');
+                if (infoResult.success) {
+                    document.getElementById('environment').textContent = infoResult.data.environment || 'Development';
+                    document.getElementById('version').textContent = infoResult.data.version || '1.0.0';
                 }
-            } catch (error) {
-                document.getElementById('appStatus').textContent = 'Offline';
-                addLog('Failed to refresh status', 'error');
+
+                if (!result.demo) {
+                    addLog('Status refreshed successfully', 'success');
+                } else if (!demoMode) {
+                    demoMode = true;
+                    addLog('Running in demo mode - start backend with: mvn spring-boot:run', 'warning');
+                }
+            } else {
+                document.getElementById('appStatus').innerHTML = '<span style="color: #f85149;">Offline</span>';
+                addLog('Backend unavailable', 'error');
             }
+
             document.getElementById('lastCheck').textContent = new Date().toLocaleTimeString();
         }
 
@@ -1272,6 +1429,153 @@
             }, 150);
         }
 
+        // Pipeline Control Functions
+        let pipelinePolling = null;
+        const stageNames = ['SOURCE_CONTROL', 'BUILD_MAVEN', 'DOCKER_BUILD', 'PUSH_REGISTRY', 'DEPLOY_KUBERNETES'];
+
+        async function triggerPipeline() {
+            const btn = document.getElementById('runPipelineBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+
+            addLog('🚀 Triggering CI/CD Pipeline execution...', 'info');
+
+            try {
+                const response = await fetch(BASE_URL + '/api/pipeline/trigger', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    addLog(`✓ Pipeline started - Execution ID: ${data.executionId}`, 'success');
+                    document.getElementById('pipelineStatusText').innerHTML =
+                        `<i class="fas fa-clock"></i> Pipeline running...`;
+
+                    // Start polling for updates
+                    if (pipelinePolling) clearInterval(pipelinePolling);
+                    pipelinePolling = setInterval(refreshPipelineStatus, 1000);
+                } else {
+                    addLog('✗ ' + data.message, 'warning');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-play"></i> Run Pipeline';
+                }
+            } catch (error) {
+                addLog('✗ Failed to trigger pipeline: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Run Pipeline';
+            }
+        }
+
+        async function refreshPipelineStatus() {
+            try {
+                const response = await fetch(BASE_URL + '/api/pipeline/status');
+                const data = await response.json();
+
+                if (data.status === 'RUNNING') {
+                    updatePipelineUI(data);
+                } else if (data.status === 'SUCCESS') {
+                    updatePipelineUI(data);
+                    document.getElementById('pipelineStatusText').innerHTML =
+                        `<span style="color: #3fb950;"><i class="fas fa-check-circle"></i> Pipeline completed successfully!</span>`;
+                    addLog('✓ Pipeline execution completed successfully', 'success');
+                    stopPipelinePolling();
+                } else if (data.status === 'FAILED') {
+                    updatePipelineUI(data);
+                    document.getElementById('pipelineStatusText').innerHTML =
+                        `<span style="color: #f85149;"><i class="fas fa-times-circle"></i> Pipeline failed</span>`;
+                    addLog('✗ Pipeline execution failed', 'error');
+                    stopPipelinePolling();
+                } else if (data.status === 'IDLE') {
+                    // Pipeline is idle
+                    document.getElementById('pipelineStatusText').textContent = '';
+                }
+            } catch (error) {
+                console.error('Error refreshing pipeline status:', error);
+            }
+        }
+
+        function stopPipelinePolling() {
+            if (pipelinePolling) {
+                clearInterval(pipelinePolling);
+                pipelinePolling = null;
+            }
+            const btn = document.getElementById('runPipelineBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-play"></i> Run Pipeline';
+        }
+
+        async function triggerPipelineFromAPI() {
+            addLog('🚀 Triggering pipeline from API Endpoints...', 'info');
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch(BASE_URL + '/api/pipeline/trigger', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                const duration = Date.now() - startTime;
+
+                document.getElementById('pipeline-trigger-response').innerHTML = `
+                    <div style="color: ${data.success ? '#3fb950' : '#f85149'}; margin-bottom: 10px;">
+                        <i class="fas fa-${data.success ? 'check-circle' : 'times-circle'}"></i> ${response.status} (${duration}ms)
+                    </div>
+                    <pre>${formatJSON(data)}</pre>
+                `;
+
+                if (data.success) {
+                    addLog(`✓ Pipeline started - ID: ${data.executionId}`, 'success');
+                    // Start polling
+                    if (pipelinePolling) clearInterval(pipelinePolling);
+                    pipelinePolling = setInterval(refreshPipelineStatus, 1000);
+                } else {
+                    addLog('✗ ' + data.message, 'warning');
+                }
+            } catch (error) {
+                document.getElementById('pipeline-trigger-response').innerHTML = `
+                    <div style="color: #f85149;">
+                        <i class="fas fa-times-circle"></i> ${error.message}
+                    </div>
+                `;
+                addLog('✗ Failed to trigger pipeline: ' + error.message, 'error');
+            }
+        }
+
+        function updatePipelineUI(data) {
+            const stages = data.stages || {};
+
+            // Update each stage
+            stageNames.forEach((stageName, index) => {
+                const stageStatus = stages[stageName];
+                if (!stageStatus) return;
+
+                const stageNumber = document.getElementById(`stage-number-${index}`);
+                const progressBar = document.getElementById(`progress-bar-${index}`);
+                const progress = document.getElementById(`progress-${index}`);
+
+                // Reset classes
+                stageNumber.className = 'stage-number';
+
+                if (stageStatus.status === 'complete') {
+                    stageNumber.classList.add('complete');
+                    progressBar.style.display = 'none';
+                } else if (stageStatus.status === 'running') {
+                    stageNumber.style.background = '#58a6ff';
+                    stageNumber.style.borderColor = '#58a6ff';
+                    stageNumber.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    progressBar.style.display = 'block';
+                    progress.style.width = stageStatus.progress + '%';
+                } else if (stageStatus.status === 'failed') {
+                    stageNumber.style.background = '#f85149';
+                    stageNumber.style.borderColor = '#f85149';
+                    stageNumber.innerHTML = '<i class="fas fa-times"></i>';
+                    progressBar.style.display = 'none';
+                } else {
+                    // pending
+                    progressBar.style.display = 'none';
+                }
+            });
+        }
+
         // Keyboard navigation
         document.addEventListener('keydown', function (e) {
             const lightbox = document.getElementById('lightbox');
@@ -1287,21 +1591,36 @@
             }
         });
 
-        // Auto-refresh
+        // Initialize
+        addLog('🚀 DevOps Dashboard initialized', 'success');
+        addLog('💡 Tip: Start backend with "mvn spring-boot:run" for live data', 'info');
+
+        // Auto-refresh every 30 seconds
         setInterval(refreshAll, 30000);
         refreshAll();
 
-        // Simulate activity
+        // Simulate demo activity logs
         setInterval(() => {
-            const messages = [
-                'Health check executed',
-                'Request processed successfully',
-                'Cache updated',
-                'Metrics collected'
-            ];
-            const types = ['info', 'success'];
-            addLog(messages[Math.floor(Math.random() * messages.length)],
-                types[Math.floor(Math.random() * types.length)]);
+            if (demoMode) {
+                const messages = [
+                    '📊 Demo: Health check simulated',
+                    '✅ Demo: Request processed',
+                    '🔄 Demo: Cache updated',
+                    '📈 Demo: Metrics collected',
+                    '🐳 Demo: Container status checked',
+                    '☸️  Demo: Kubernetes pod healthy'
+                ];
+                const msg = messages[Math.floor(Math.random() * messages.length)];
+                addLog(msg, 'info');
+            } else if (isBackendOnline) {
+                const messages = [
+                    'Health check executed',
+                    'Request processed successfully',
+                    'Cache updated',
+                    'Metrics collected'
+                ];
+                addLog(messages[Math.floor(Math.random() * messages.length)], 'success');
+            }
         }, 10000);
     </script>
 </body>

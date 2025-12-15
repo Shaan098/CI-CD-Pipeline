@@ -28,6 +28,7 @@ How it works:
 If you prefer to run locally instead of using GitHub Actions, install Docker Desktop and follow the commands below.
 
 <!-- CI trigger -->
+
 Workflow triggered at 2025-12-16T00:00:00Z
 
 ## 📋 Table of Contents
