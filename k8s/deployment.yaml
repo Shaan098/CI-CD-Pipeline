@@ -9,19 +9,19 @@ metadata:
 spec:
   # Number of pod replicas for high availability
   replicas: 3
-  
+
   # Rolling update strategy for zero-downtime deployments
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1        # Maximum number of pods that can be created over the desired number
-      maxUnavailable: 0  # Ensure at least the desired number of pods are always available
-  
+      maxSurge: 1 # Maximum number of pods that can be created over the desired number
+      maxUnavailable: 0 # Ensure at least the desired number of pods are always available
+
   # Selector to match pods
   selector:
     matchLabels:
       app: devops-demo
-  
+
   # Pod template
   template:
     metadata:
@@ -30,60 +30,60 @@ spec:
         version: v1
     spec:
       containers:
-      - name: devops-demo
-        # TODO: Replace 'YOURUSERNAME' with your actual Docker Hub username
-        # This image will be updated by Jenkins pipeline with build number tag
-        # Example: johndoe/devops-demo:latest or mycompany/devops-demo:42-a1b2c3d
-        image: YOURUSERNAME/devops-demo:latest
-        imagePullPolicy: Always
-        
-        # Container port
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        
-        # Environment variables from ConfigMap
-        envFrom:
-        - configMapRef:
-            name: devops-demo-config
-        
-        # Additional environment variables
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "production"
-        
-        # Resource requests and limits
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        
-        # Liveness probe - checks if container is alive
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        
-        # Readiness probe - checks if container is ready to accept traffic
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
-      
+        - name: devops-demo
+          # TODO: Replace 'YOURUSERNAME' with your actual Docker Hub username
+          # This image will be updated by Jenkins pipeline with build number tag
+          # Example: johndoe/devops-demo:latest or mycompany/devops-demo:42-a1b2c3d
+          image: Shaan098/devops-demo:latest
+          imagePullPolicy: Always
+
+          # Container port
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+
+          # Environment variables from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: devops-demo-config
+
+          # Additional environment variables
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+
+          # Resource requests and limits
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          # Liveness probe - checks if container is alive
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # Readiness probe - checks if container is ready to accept traffic
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
       # Restart policy
       restartPolicy: Always
-      
+
       # Termination grace period
       terminationGracePeriodSeconds: 30

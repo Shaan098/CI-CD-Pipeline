@@ -4,6 +4,29 @@
 
 A complete CI/CD pipeline implementation for a Java-based Spring Boot application using Jenkins, Docker, and Kubernetes. This project demonstrates modern DevOps practices including automated builds, testing, containerization, and zero-downtime deployments.
 
+## GitHub Actions CI/CD (added)
+
+A GitHub Actions workflow (`.github/workflows/ci-cd.yml`) has been added to perform the full pipeline:
+
+- Build and run Maven tests
+- Build and push Docker image to Docker Hub
+- Deploy to Kubernetes cluster and perform a rolling update
+
+Required GitHub repository secrets:
+
+- `DOCKERHUB_USERNAME` — your Docker Hub username (e.g., Shaan098)
+- `DOCKERHUB_TOKEN` — Docker Hub access token or password
+- `KUBE_CONFIG` — base64-encoded Kubernetes `kubeconfig` file for the target cluster
+
+How it works:
+
+1. Push to `main` triggers the workflow.
+2. Maven build and tests run.
+3. Docker image is built and pushed with tags `latest` and a run-specific tag.
+4. Workflow decodes `KUBE_CONFIG`, applies namespace/configmap/service, and updates the deployment image.
+
+If you prefer to run locally instead of using GitHub Actions, install Docker Desktop and follow the commands below.
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -37,7 +60,7 @@ graph TB
         DEV[Developer]
         GIT[GitHub Repository]
     end
-    
+
     subgraph "CI/CD - Jenkins"
         CHECKOUT[1. Checkout Code]
         BUILD[2. Maven Build]
@@ -46,22 +69,22 @@ graph TB
         DOCKER_BUILD[5. Build Docker Image]
         DOCKER_PUSH[6. Push to Registry]
     end
-    
+
     subgraph "Container Registry"
         DOCKERHUB[Docker Hub]
     end
-    
+
     subgraph "Kubernetes Cluster"
         DEPLOY[7. Rolling Deployment]
         PODS[Application Pods]
         SVC[Service]
     end
-    
+
     subgraph "Monitoring"
         HEALTH[Health Checks]
         LOGS[Logs]
     end
-    
+
     DEV -->|Push Code| GIT
     GIT -->|Webhook Trigger| CHECKOUT
     CHECKOUT --> BUILD
@@ -80,6 +103,7 @@ graph TB
 ## ✨ Features
 
 ### Application Features
+
 - ✅ RESTful API endpoints
 - ✅ Health check endpoint for monitoring
 - ✅ Application info endpoint
@@ -87,6 +111,7 @@ graph TB
 - ✅ Spring Boot Actuator integration
 
 ### DevOps Features
+
 - ✅ Automated CI/CD pipeline with Jenkins
 - ✅ Multi-stage Docker builds for optimization
 - ✅ Kubernetes deployment with 3 replicas
@@ -99,48 +124,55 @@ graph TB
 
 ## 🛠️ Technology Stack
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| **Application** | Java 17 + Spring Boot 3.2.0 | Backend application framework |
-| **Build Tool** | Maven | Dependency management and building |
-| **Containerization** | Docker | Application containerization |
-| **Orchestration** | Kubernetes (Minikube) | Container orchestration |
-| **CI/CD** | Jenkins | Automation server |
-| **Version Control** | Git/GitHub | Source code management |
-| **Container Registry** | Docker Hub | Docker image storage |
-| **Testing** | JUnit + Spring Test | Unit testing |
+| Component              | Technology                  | Purpose                            |
+| ---------------------- | --------------------------- | ---------------------------------- |
+| **Application**        | Java 17 + Spring Boot 3.2.0 | Backend application framework      |
+| **Build Tool**         | Maven                       | Dependency management and building |
+| **Containerization**   | Docker                      | Application containerization       |
+| **Orchestration**      | Kubernetes (Minikube)       | Container orchestration            |
+| **CI/CD**              | Jenkins                     | Automation server                  |
+| **Version Control**    | Git/GitHub                  | Source code management             |
+| **Container Registry** | Docker Hub                  | Docker image storage               |
+| **Testing**            | JUnit + Spring Test         | Unit testing                       |
 
 ## 📦 Prerequisites
 
 Before you begin, ensure you have the following installed:
 
 ### Required Software
+
 - **Java Development Kit (JDK) 17+**
+
   ```powershell
   java -version
   ```
 
 - **Maven 3.6+**
+
   ```powershell
   mvn -version
   ```
 
 - **Docker Desktop**
+
   ```powershell
   docker --version
   ```
 
 - **Minikube**
+
   ```powershell
   minikube version
   ```
 
 - **kubectl**
+
   ```powershell
   kubectl version --client
   ```
 
 - **Jenkins** (Local or Docker)
+
   - See [docs/SETUP.md](docs/SETUP.md) for installation instructions
 
 - **Git**
@@ -149,18 +181,21 @@ Before you begin, ensure you have the following installed:
   ```
 
 ### Accounts Required
+
 - GitHub account (for version control)
 - Docker Hub account (for image registry)
 
 ## 🚀 Quick Start
 
 ### 1. Clone the Repository
+
 ```powershell
 git clone <your-repo-url>
 cd "DEVOPS PROJECT"
 ```
 
 ### 2. Build the Application Locally
+
 ```powershell
 # Compile and build
 mvn clean package
@@ -173,11 +208,13 @@ mvn spring-boot:run
 ```
 
 Access the application at:
+
 - Health: http://localhost:8080/health
 - API Info: http://localhost:8080/api/info
 - Welcome: http://localhost:8080/
 
 ### 3. Build and Run Docker Container
+
 ```powershell
 # Build Docker image
 docker build -t devops-demo:1.0 .
@@ -190,6 +227,7 @@ Invoke-WebRequest -Uri http://localhost:8080/health
 ```
 
 ### 4. Deploy to Kubernetes (Minikube)
+
 ```powershell
 # Start Minikube
 minikube start
@@ -209,6 +247,7 @@ minikube service devops-demo-service -n devops-demo
 ```
 
 ### 5. Set Up Jenkins Pipeline
+
 See [docs/SETUP.md](docs/SETUP.md) for detailed Jenkins configuration instructions.
 
 ## 📁 Project Structure
@@ -270,7 +309,7 @@ sequenceDiagram
     participant Jen as Jenkins
     participant Doc as Docker Hub
     participant K8s as Kubernetes
-    
+
     Dev->>Git: Push code
     Git->>Jen: Webhook trigger
     Jen->>Git: Checkout code
@@ -287,6 +326,7 @@ sequenceDiagram
 ### Zero-Downtime Deployment
 
 The pipeline implements a **rolling update strategy**:
+
 - `maxSurge: 1` - One extra pod created during update
 - `maxUnavailable: 0` - All pods remain available during update
 - Health probes ensure only healthy pods receive traffic
@@ -327,16 +367,19 @@ kubectl rollout undo deployment/devops-demo-deployment -n devops-demo --to-revis
 ## 🧪 Testing
 
 ### Run Unit Tests
+
 ```powershell
 mvn test
 ```
 
 ### Run Integration Tests
+
 ```powershell
 mvn verify
 ```
 
 ### Test Endpoints
+
 ```powershell
 # Health check
 Invoke-WebRequest -Uri http://localhost:8080/health
@@ -353,6 +396,7 @@ Invoke-WebRequest -Uri http://localhost:8080/
 ### Common Issues
 
 #### Build Fails
+
 ```powershell
 # Clean and rebuild
 mvn clean install -U
@@ -362,6 +406,7 @@ mvn clean package -DskipTests
 ```
 
 #### Docker Build Fails
+
 ```powershell
 # Check Docker is running
 docker ps
@@ -371,6 +416,7 @@ docker system prune -a
 ```
 
 #### Kubernetes Pod Not Starting
+
 ```powershell
 # Check pod status
 kubectl describe pod <pod-name> -n devops-demo
@@ -383,6 +429,7 @@ kubectl get events -n devops-demo --sort-by='.lastTimestamp'
 ```
 
 #### Jenkins Pipeline Fails
+
 - Verify Jenkins plugins are installed (Git, Docker, Kubernetes)
 - Check credentials are configured correctly
 - Ensure kubectl is accessible from Jenkins
@@ -435,6 +482,7 @@ DevOps Team - CI/CD Pipeline Implementation
 ---
 
 **Note**: This is a demonstration project. For production use, consider adding:
+
 - SSL/TLS certificates
 - Secret management (e.g., Vault)
 - Enhanced monitoring (Prometheus/Grafana)

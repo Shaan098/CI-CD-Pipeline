@@ -5,9 +5,9 @@ pipeline {
         // Docker Hub credentials (configure in Jenkins)
         DOCKER_REGISTRY = 'docker.io'
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
-        // TODO: Replace 'YOURUSERNAME' with your actual Docker Hub username
+        // Docker Hub repository (updated)
         // Example: 'johndoe/devops-demo' or 'mycompany/devops-demo'
-        DOCKER_IMAGE_NAME = 'YOURUSERNAME/devops-demo'
+        DOCKER_IMAGE_NAME = 'Shaan098/devops-demo'
         
         // Kubernetes configuration
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
