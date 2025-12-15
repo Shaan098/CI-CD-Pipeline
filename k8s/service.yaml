@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-demo-service
+  namespace: devops-demo
+  labels:
+    app: devops-demo
+spec:
+  # Service type - NodePort for Minikube access
+  type: NodePort
+  
+  # Selector to target pods
+  selector:
+    app: devops-demo
+  
+  # Ports configuration
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080        # Service port
+    targetPort: 8080  # Container port
+    nodePort: 30080   # External port (accessible on Minikube)
+  
+  # Session affinity
+  sessionAffinity: None

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Pipeline Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 18px;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 5px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #c9d1d9;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #0d1117;
+            border-left-color: #58a6ff;
+        }
+
+        .nav-item.active {
+            background: #0d1117;
+            border-left-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .btn-primary {
+            background: #238636;
+            border-color: #238636;
+        }
+
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: #58a6ff;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon {
+            font-size: 20px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .change-positive {
+            color: #3fb950;
+        }
+
+        .change-negative {
+            color: #f85149;
+        }
+
+        .terminal {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #161b22;
+            padding: 12px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red {
+            background: #f85149;
+        }
+
+        .dot-yellow {
+            background: #d29922;
+        }
+
+        .dot-green {
+            background: #3fb950;
+        }
+
+        .terminal-body {
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .log-success {
+            color: #3fb950;
+        }
+
+        .log-error {
+            color: #f85149;
+        }
+
+        .log-warning {
+            color: #d29922;
+        }
+
+        .log-info {
+            color: #58a6ff;
+        }
+
+        .endpoint-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .endpoint-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .endpoint-header:hover {
+            background: #0d1117;
+        }
+
+        .endpoint-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .endpoint-method {
+            background: #238636;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .endpoint-path {
+            font-family: monospace;
+            font-size: 14px;
+            color: #58a6ff;
+        }
+
+        .endpoint-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3fb950;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .endpoint-body {
+            padding: 0 16px 16px;
+            display: none;
+        }
+
+        .endpoint-body.active {
+            display: block;
+        }
+
+        .endpoint-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .response-container {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .pipeline-stage {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stage-number {
+            width: 40px;
+            height: 40px;
+            background: #21262d;
+            border: 2px solid #30363d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .stage-number.complete {
+            background: #238636;
+            border-color: #238636;
+        }
+
+        .stage-content {
+            flex: 1;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .stage-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stage-desc {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: #21262d;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #58a6ff, #3fb950);
+            width: 0%;
+            animation: loading 2s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 70%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        pre {
+            margin: 0;
+            color: #c9d1d9;
+        }
+
+        .json-key {
+            color: #79c0ff;
+        }
+
+        .json-string {
+            color: #a5d6ff;
+        }
+
+        .json-number {
+            color: #79c0ff;
+        }
+
+        .json-boolean {
+            color: #ff7b72;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+
+        /* Explore Section Styles */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .explore-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .explore-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #58a6ff;
+            box-shadow: 0 12px 40px rgba(88, 166, 255, 0.3);
+        }
+
+        .explore-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .explore-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .explore-card-content {
+            padding: 20px;
+        }
+
+        .explore-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+
+        .explore-card-desc {
+            color: #8b949e;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .explore-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(88, 166, 255, 0.9);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInLightbox 0.3s;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        @keyframes fadeInLightbox {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            animation: zoomIn 0.3s;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(88, 166, 255, 0.5);
+        }
+
+        .lightbox-caption {
+            background: rgba(22, 27, 34, 0.95);
+            color: #c9d1d9;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-caption h3 {
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: #f85149;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+
+        .lightbox-close:hover {
+            background: #ff6b6b;
+            transform: rotate(90deg);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(88, 166, 255, 0.8);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-nav:hover {
+            background: #58a6ff;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .lightbox-prev {
+            left: 20px;
+        }
+
+        .lightbox-next {
+            right: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar .logo p,
+            .sidebar .nav-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .explore-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1><i class="fas fa-code-branch"></i> <span>DevOps Monitor</span></h1>
+            <p>CI/CD Pipeline v1.0.0</p>
+        </div>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="showSection('endpoints')">
+            <i class="fas fa-network-wired"></i>
+            <span>API Endpoints</span>
+        </div>
+        <div class="nav-item" onclick="showSection('pipeline')">
+            <i class="fas fa-tasks"></i>
+            <span>Pipeline</span>
+        </div>
+        <div class="nav-item" onclick="showSection('logs')">
+            <i class="fas fa-file-code"></i>
+            <span>Live Logs</span>
+        </div>
+        <div class="nav-item" onclick="showSection('docs')">
+            <i class="fas fa-book"></i>
+            <span>Documentation</span>
+        </div>
+        <div class="nav-item" onclick="showSection('explore')">
+            <i class="fas fa-images"></i>
+            <span>Explore</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section">
+            <div class="header">
+                <h2><i class="fas fa-chart-line"></i> System Overview</h2>
+                <div class="header-actions">
+                    <button class="btn" onclick="refreshAll()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="testAllEndpoints()">
+                        <i class="fas fa-play"></i> Test All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Application Status</span>
+                        <i class="fas fa-server metric-icon" style="color: #3fb950;"></i>
+                    </div>
+                    <div class="metric-value" id="appStatus">Checking...</div>
+                    <div class="metric-change change-positive">
+                        <i class="fas fa-arrow-up"></i> <span id="uptime">0s</span> uptime
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Response Time</span>
+                        <i class="fas fa-tachometer-alt metric-icon" style="color: #58a6ff;"></i>
+                    </div>
+                    <div class="metric-value" id="responseTime">--</div>
+                    <div class="metric-change">
+                        <i class="fas fa-clock"></i> Last checked <span id="lastCheck">never</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Environment</span>
+                        <i class="fas fa-cog metric-icon" style="color: #d29922;"></i>
+                    </div>
+                    <div class="metric-value" id="environment">--</div>
+                    <div class="metric-change">
+                        <i class="fas fa-code-branch"></i> Version <span id="version">--</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Endpoints</span>
+                        <i class="fas fa-plug metric-icon" style="color: #f85149;"></i>
+                    </div>
+                    <div class="metric-value">3/3</div>
+                    <div class="metric-change change-positive">
+                        <i class="fas fa-check-circle"></i> All operational
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Terminal -->
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-title">
+                        <i class="fas fa-terminal"></i> Live Application Logs
+                    </div>
+                    <div class="terminal-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                </div>
+                <div class="terminal-body" id="terminalLogs">
+                    <div class="terminal-line log-info">[INFO] DevOps Demo Application Monitor Started</div>
+                    <div class="terminal-line log-success">[SUCCESS] Spring Boot Application Running</div>
+                    <div class="terminal-line log-info">[INFO] Server listening on port 8080</div>
+                    <div class="terminal-line log-warning">[READY] Waiting for API requests...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Endpoints Section -->
+        <div id="endpoints" class="section" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-network-wired"></i> API Endpoints</h2>
+            </div>
+
+            <div class="endpoint-grid">
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('health')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method">GET</span>
+                            <span class="endpoint-path">/health</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="health-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary" onclick="testEndpoint('/health', 'health-response')">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                            <button class="btn" onclick="window.open('http://127.0.0.1:8080/health', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </button>
+                        </div>
+                        <div id="health-response" class="response-container">
+                            Click "Execute" to test this endpoint
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('info')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method">GET</span>
+                            <span class="endpoint-path">/api/info</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="info-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary" onclick="testEndpoint('/api/info', 'info-response')">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                            <button class="btn" onclick="window.open('http://127.0.0.1:8080/api/info', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </button>
+                        </div>
+                        <div id="info-response" class="response-container">
+                            Click "Execute" to test this endpoint
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header" onclick="toggleEndpoint('root')">
+                        <div class="endpoint-info">
+                            <span class="endpoint-method">GET</span>
+                            <span class="endpoint-path">/</span>
+                        </div>
+                        <div class="endpoint-status">
+                            <span class="status-dot"></span>
+                            <span>Ready</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="endpoint-body" id="root-body">
+                        <div class="endpoint-actions">
+                            <button class="btn btn-primary" onclick="testEndpoint('/', 'root-response')">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                            <button class="btn" onclick="window.open('http://127.0.0.1:8080/', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Open in Browser
+                            </button>
+                        </div>
+                        <div id="root-response" class="response-container">
+                            Click "Execute" to test this endpoint
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Section -->
+        <div id="pipeline" class="section" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-tasks"></i> CI/CD Pipeline</h2>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number complete">1</div>
+                <div class="stage-content">
+                    <div class="stage-title"><i class="fab fa-github"></i> Source Control</div>
+                    <div class="stage-desc">Code repository on GitHub with webhook integration</div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number complete">2</div>
+                <div class="stage-content">
+                    <div class="stage-title"><i class="fas fa-hammer"></i> Build with Maven</div>
+                    <div class="stage-desc">Compile Java source code and run unit tests</div>
+                    <div class="loading-bar">
+                        <div class="loading-progress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number complete">3</div>
+                <div class="stage-content">
+                    <div class="stage-title"><i class="fab fa-docker"></i> Docker Containerization</div>
+                    <div class="stage-desc">Build optimized Docker image with multi-stage build</div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number complete">4</div>
+                <div class="stage-content">
+                    <div class="stage-title"><i class="fas fa-cloud-upload-alt"></i> Push to Registry</div>
+                    <div class="stage-desc">Upload container image to Docker Hub</div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number complete">5</div>
+                <div class="stage-content">
+                    <div class="stage-title"><i class="fas fa-dharmachakra"></i> Deploy to Kubernetes</div>
+                    <div class="stage-desc">Rolling update deployment with zero downtime</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div id="logs" class="section" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-file-code"></i> Application Logs</h2>
+                <button class="btn" onclick="clearLogs()">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-title">
+                        <i class="fas fa-terminal"></i> Real-time Application Logs
+                    </div>
+                    <div class="terminal-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                </div>
+                <div class="terminal-body" id="appLogs" style="max-height: 500px;">
+                    <!-- Logs will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Docs Section -->
+        <div id="docs" class="section" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-book"></i> Documentation</h2>
+            </div>
+            <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 30px;">
+                <h3 style="margin-bottom: 20px;">Quick Start Guide</h3>
+                <p style="color: #8b949e; margin-bottom: 20px;">
+                    This DevOps CI/CD Pipeline demonstrates a complete automated workflow from code commit to production
+                    deployment.
+                </p>
+                <h4 style="margin: 20px 0 10px;">Technology Stack</h4>
+                <ul style="color: #8b949e; list-style-position: inside;">
+                    <li>Java 17 + Spring Boot 3.2.0</li>
+                    <li>Maven for build automation</li>
+                    <li>Docker for containerization</li>
+                    <li>Kubernetes for orchestration</li>
+                    <li>Jenkins for CI/CD automation</li>
+                </ul>
+                <h4 style="margin: 20px 0 10px;">Key Features</h4>
+                <ul style="color: #8b949e; list-style-position: inside;">
+                    <li>Zero-downtime deployments with rolling updates</li>
+                    <li>Automated testing in pipeline</li>
+                    <li>Health monitoring and probes</li>
+                    <li>Multi-stage Docker builds for optimization</li>
+                    <li>Production-ready configuration</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Explore Section -->
+        <div id="explore" class="section" style="display: none;">
+            <div class="header">
+                <h2><i class="fas fa-images"></i> DevOps Architecture Gallery</h2>
+                <div class="header-actions">
+                    <span style="color: #8b949e;">Click any image to view in full screen</span>
+                </div>
+            </div>
+
+            <div class="explore-grid">
+                <div class="explore-card" onclick="openLightbox(0)">
+                    <span class="explore-badge">CI/CD</span>
+                    <img src="images/cicd_pipeline.png" alt="CI/CD Pipeline Architecture">
+                    <div class="explore-card-content">
+                        <div class="explore-card-title">
+                            <i class="fas fa-code-branch"></i> Complete CI/CD Pipeline
+                        </div>
+                        <div class="explore-card-desc">
+                            End-to-end automated workflow from code commit through Jenkins, Docker, and Kubernetes to
+                            production deployment. Features webhook integration, automated testing, and zero-downtime
+                            releases.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explore-card" onclick="openLightbox(1)">
+                    <span class="explore-badge">Kubernetes</span>
+                    <img src="images/kubernetes.png" alt="Kubernetes Orchestration">
+                    <div class="explore-card-content">
+                        <div class="explore-card-title">
+                            <i class="fas fa-dharmachakra"></i> Kubernetes Orchestration
+                        </div>
+                        <div class="explore-card-desc">
+                            Container orchestration with 3-replica deployment, load balancing, auto-scaling, and
+                            self-healing capabilities. Implements rolling updates for high availability.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explore-card" onclick="openLightbox(2)">
+                    <span class="explore-badge">Docker</span>
+                    <img src="images/docker.png" alt="Docker Multi-stage Build">
+                    <div class="explore-card-content">
+                        <div class="explore-card-title">
+                            <i class="fab fa-docker"></i> Docker Optimization
+                        </div>
+                        <div class="explore-card-desc">
+                            Multi-stage build process achieving 67% size reduction (600MB → 195MB). Includes security
+                            hardening with non-root user and health check integration.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 30px; margin-top: 20px;">
+                <h3 style="color: #58a6ff; margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Architecture
+                    Highlights</h3>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4 style="color: #c9d1d9; margin-bottom: 10px;">🚀 Deployment Speed</h4>
+                        <p style="color: #8b949e; font-size: 14px;">Complete pipeline execution in 3-4 minutes from
+                            commit to production</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #c9d1d9; margin-bottom: 10px;">⚡ Zero Downtime</h4>
+                        <p style="color: #8b949e; font-size: 14px;">Rolling updates ensure continuous availability
+                            during deployments</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #c9d1d9; margin-bottom: 10px;">🔒 Security First</h4>
+                        <p style="color: #8b949e; font-size: 14px;">Non-root containers, resource limits, and namespace
+                            isolation</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #c9d1d9; margin-bottom: 10px;">📊 Auto-Scaling</h4>
+                        <p style="color: #8b949e; font-size: 14px;">Kubernetes HPA ready for dynamic resource allocation
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+            <div class="lightbox-content">
+                <button class="lightbox-close" onclick="closeLightbox(event)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1, event)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <img id="lightbox-image" src="" alt="">
+                <div class="lightbox-caption" id="lightbox-caption"></div>
+                <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1, event)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1:8080';
+        let startTime = Date.now();
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(sectionId).style.display = 'block';
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        function toggleEndpoint(id) {
+            const body = document.getElementById(id + '-body');
+            body.classList.toggle('active');
+        }
+
+        function formatJSON(obj) {
+            return JSON.stringify(obj, null, 2)
+                .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+                .replace(/: "([^"]+)"/g, ': <span class="json-string">"$1"</span>')
+                .replace(/: (\d+)/g, ': <span class="json-number">$1</span>')
+                .replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>');
+        }
+
+        function addLog(message, type = 'info') {
+            const terminal = document.getElementById('terminalLogs');
+            const appLogs = document.getElementById('appLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = `log-${type}`;
+            const logLine = `<div class="terminal-line ${logClass}">[${timestamp}] ${message}</div>`;
+
+            if (terminal) terminal.innerHTML += logLine;
+            if (appLogs) appLogs.innerHTML += logLine;
+
+            terminal?.scrollTo(0, terminal.scrollHeight);
+            appLogs?.scrollTo(0, appLogs.scrollHeight);
+        }
+
+        async function testEndpoint(path, responseId) {
+            const startTime = Date.now();
+            addLog(`Testing endpoint: ${path}`, 'info');
+
+            try {
+                const response = await fetch(BASE_URL + path);
+                const data = await response.json();
+                const duration = Date.now() - startTime;
+
+                document.getElementById(responseId).innerHTML = `
+                    <div style="color: #3fb950; margin-bottom: 10px;">
+                        <i class="fas fa-check-circle"></i> ${response.status} ${response.statusText} (${duration}ms)
+                    </div>
+                    <pre>${formatJSON(data)}</pre>
+                `;
+
+                addLog(`✓ ${path} responded in ${duration}ms`, 'success');
+                document.getElementById('responseTime').textContent = duration + 'ms';
+            } catch (error) {
+                document.getElementById(responseId).innerHTML = `
+                    <div style="color: #f85149;">
+                        <i class="fas fa-times-circle"></i> ${error.message}
+                    </div>
+                `;
+                addLog(`✗ ${path} failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAllEndpoints() {
+            addLog('Starting comprehensive endpoint test...', 'warning');
+            await testEndpoint('/health', 'health-response');
+            await new Promise(r => setTimeout(r, 300));
+            await testEndpoint('/api/info', 'info-response');
+            await new Promise(r => setTimeout(r, 300));
+            await testEndpoint('/', 'root-response');
+            addLog('All endpoint tests completed', 'success');
+        }
+
+        async function refreshAll() {
+            try {
+                const response = await fetch(BASE_URL + '/health');
+                if (response.ok) {
+                    document.getElementById('appStatus').textContent = 'Running';
+                    const uptime = Math.floor((Date.now() - startTime) / 1000);
+                    document.getElementById('uptime').textContent = uptime + 's';
+
+                    const info = await fetch(BASE_URL + '/api/info').then(r => r.json());
+                    document.getElementById('environment').textContent = info.environment || 'N/A';
+                    document.getElementById('version').textContent = info.version || 'N/A';
+
+                    addLog('Status refreshed successfully', 'success');
+                } else {
+                    throw new Error('Not responding');
+                }
+            } catch (error) {
+                document.getElementById('appStatus').textContent = 'Offline';
+                addLog('Failed to refresh status', 'error');
+            }
+            document.getElementById('lastCheck').textContent = new Date().toLocaleTimeString();
+        }
+
+        function clearLogs() {
+            document.getElementById('appLogs').innerHTML = '';
+            addLog('Logs cleared', 'info');
+        }
+
+        // Lightbox Gallery Functions
+        const lightboxImages = [
+            {
+                src: 'images/cicd_pipeline.png',
+                title: 'Complete CI/CD Pipeline Architecture',
+                desc: 'Automated workflow from GitHub through Jenkins, Docker build, and Kubernetes deployment with zero-downtime releases.'
+            },
+            {
+                src: 'images/kubernetes.png',
+                title: 'Kubernetes Container Orchestration',
+                desc: '3-replica deployment with load balancing, auto-scaling, self-healing, and rolling updates for high availability.'
+            },
+            {
+                src: 'images/docker.png',
+                title: 'Docker Multi-stage Build Optimization',
+                desc: 'Multi-stage build achieving 67% size reduction with security hardening and health checks.'
+            }
+        ];
+
+        let currentLightboxIndex = 0;
+
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-image');
+            const caption = document.getElementById('lightbox-caption');
+
+            img.src = lightboxImages[index].src;
+            caption.innerHTML = '<h3>' + lightboxImages[index].title + '</h3><p>' + lightboxImages[index].desc + '</p>';
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            if (event.target.id === 'lightbox' || event.target.closest('.lightbox-close')) {
+                document.getElementById('lightbox').classList.remove('active');
+                document.body.style.overflow = 'auto';
+                event.stopPropagation();
+            }
+        }
+
+        function navigateLightbox(direction, event) {
+            event.stopPropagation();
+            currentLightboxIndex += direction;
+            if (currentLightboxIndex < 0) currentLightboxIndex = lightboxImages.length - 1;
+            if (currentLightboxIndex >= lightboxImages.length) currentLightboxIndex = 0;
+
+            const img = document.getElementById('lightbox-image');
+            const caption = document.getElementById('lightbox-caption');
+            img.style.transition = 'opacity 0.15s';
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = lightboxImages[currentLightboxIndex].src;
+                caption.innerHTML = '<h3>' + lightboxImages[currentLightboxIndex].title + '</h3><p>' + lightboxImages[currentLightboxIndex].desc + '</p>';
+                img.style.opacity = '1';
+            }, 150);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                } else if (e.key === 'ArrowLeft') {
+                    navigateLightbox(-1, { stopPropagation: function () { } });
+                } else if (e.key === 'ArrowRight') {
+                    navigateLightbox(1, { stopPropagation: function () { } });
+                }
+            }
+        });
+
+        // Auto-refresh
+        setInterval(refreshAll, 30000);
+        refreshAll();
+
+        // Simulate activity
+        setInterval(() => {
+            const messages = [
+                'Health check executed',
+                'Request processed successfully',
+                'Cache updated',
+                'Metrics collected'
+            ];
+            const types = ['info', 'success'];
+            addLog(messages[Math.floor(Math.random() * messages.length)],
+                types[Math.floor(Math.random() * types.length)]);
+        }, 10000);
+    </script>
+</body>
+
+</html>

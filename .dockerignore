@@ -1,0 +1,51 @@
+# Docker ignore file
+# Exclude unnecessary files from Docker build context
+
+# Maven build output
+target/
+!target/devops-demo.jar
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.classpath
+.project
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Kubernetes manifests
+k8s/
+
+# Jenkins files
+Jenkinsfile
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
