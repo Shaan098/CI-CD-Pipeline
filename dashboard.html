@@ -40,10 +40,19 @@
 
         .logo h1 {
             font-size: 18px;
-            color: #58a6ff;
+            background: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .logo h1:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
         }
 
         .logo p {
@@ -59,13 +68,34 @@
             gap: 12px;
             color: #c9d1d9;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-left: 3px solid transparent;
+            border-radius: 0 8px 8px 0;
+            margin: 4px 8px 4px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(88, 166, 255, 0.1), transparent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::before {
+            width: 100%;
         }
 
         .nav-item:hover {
-            background: #0d1117;
+            background: rgba(88, 166, 255, 0.08);
             border-left-color: #58a6ff;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
         }
 
         .nav-item.active {
