@@ -40,7 +40,7 @@
 
         .logo h1 {
             font-size: 18px;
-            background: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+            background: linear-gradient(135deg, #ff5858 0%, #f85149 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -83,7 +83,7 @@
             top: 0;
             width: 0;
             height: 100%;
-            background: linear-gradient(90deg, rgba(88, 166, 255, 0.1), transparent);
+            background: linear-gradient(90deg, rgba(248, 81, 73, 0.1), transparent);
             transition: width 0.3s ease;
         }
 
@@ -92,16 +92,16 @@
         }
 
         .nav-item:hover {
-            background: rgba(88, 166, 255, 0.08);
-            border-left-color: #58a6ff;
+            background: rgba(248, 81, 73, 0.08);
+            border-left-color: #f85149;
             transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(248, 81, 73, 0.15);
         }
 
         .nav-item.active {
             background: #0d1117;
-            border-left-color: #58a6ff;
-            color: #58a6ff;
+            border-left-color: #f85149;
+            color: #f85149;
         }
 
         .main-content {
@@ -144,7 +144,7 @@
 
         .btn:hover {
             background: #30363d;
-            border-color: #58a6ff;
+            border-color: #f85149;
         }
 
         .btn-primary {
@@ -173,7 +173,7 @@
 
         .metric-card:hover {
             transform: translateY(-2px);
-            border-color: #58a6ff;
+            border-color: #f85149;
         }
 
         .metric-header {
@@ -197,7 +197,7 @@
         .metric-value {
             font-size: 28px;
             font-weight: 600;
-            color: #58a6ff;
+            color: #f85149;
         }
 
         .metric-change {
@@ -303,7 +303,7 @@
         }
 
         .log-info {
-            color: #58a6ff;
+            color: #f85149;
         }
 
         .endpoint-grid {
@@ -350,7 +350,7 @@
         .endpoint-path {
             font-family: monospace;
             font-size: 14px;
-            color: #58a6ff;
+            color: #f85149;
         }
 
         .endpoint-status {
@@ -460,7 +460,7 @@
 
         .loading-progress {
             height: 100%;
-            background: linear-gradient(90deg, #58a6ff, #3fb950);
+            background: linear-gradient(90deg, #f85149, #3fb950);
             width: 0%;
             animation: loading 2s infinite;
         }
@@ -538,7 +538,7 @@
 
         .explore-card:hover {
             transform: translateY(-8px) scale(1.02);
-            border-color: #58a6ff;
+            border-color: #f85149;
             box-shadow: 0 12px 40px rgba(88, 166, 255, 0.3);
         }
 
@@ -560,7 +560,7 @@
         .explore-card-title {
             font-size: 18px;
             font-weight: 600;
-            color: #58a6ff;
+            color: #f85149;
             margin-bottom: 10px;
         }
 
@@ -650,7 +650,7 @@
         }
 
         .lightbox-caption h3 {
-            color: #58a6ff;
+            color: #f85149;
             margin-bottom: 10px;
         }
 
@@ -691,7 +691,7 @@
         }
 
         .lightbox-nav:hover {
-            background: #58a6ff;
+            background: #f85149;
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -789,7 +789,7 @@
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-label">Response Time</span>
-                        <i class="fas fa-tachometer-alt metric-icon" style="color: #58a6ff;"></i>
+                        <i class="fas fa-tachometer-alt metric-icon" style="color: #f85149;"></i>
                     </div>
                     <div class="metric-value" id="responseTime">--</div>
                     <div class="metric-change">
@@ -1196,7 +1196,7 @@
 
             <div
                 style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 30px; margin-top: 20px;">
-                <h3 style="color: #58a6ff; margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Architecture
+                <h3 style="color: #f85149; margin-bottom: 15px;"><i class="fas fa-info-circle"></i> Architecture
                     Highlights</h3>
                 <div
                     style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
@@ -1589,8 +1589,8 @@
                     stageNumber.classList.add('complete');
                     progressBar.style.display = 'none';
                 } else if (stageStatus.status === 'running') {
-                    stageNumber.style.background = '#58a6ff';
-                    stageNumber.style.borderColor = '#58a6ff';
+                    stageNumber.style.background = '#f85149';
+                    stageNumber.style.borderColor = '#f85149';
                     stageNumber.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                     progressBar.style.display = 'block';
                     progress.style.width = stageStatus.progress + '%';
