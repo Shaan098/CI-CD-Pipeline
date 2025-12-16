@@ -34,7 +34,7 @@ spec:
           # TODO: Replace 'YOURUSERNAME' with your actual Docker Hub username
           # This image will be updated by Jenkins pipeline with build number tag
           # Example: johndoe/devops-demo:latest or mycompany/devops-demo:42-a1b2c3d
-          image: Shaan098/devops-demo:latest
+          image: shaan098/devops-demo:latest
           imagePullPolicy: Always
 
           # Container port
