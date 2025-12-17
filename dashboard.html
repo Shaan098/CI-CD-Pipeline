@@ -83,7 +83,7 @@
             top: 0;
             width: 0;
             height: 100%;
-            background: linear-gradient(90deg, rgba(88, 166, 255, 0.1), transparent);
+            background: linear-gradient(90deg, rgba(139, 174, 102, 0.1), transparent);
             transition: width 0.3s ease;
         }
 
@@ -92,10 +92,10 @@
         }
 
         .nav-item:hover {
-            background: rgba(88, 166, 255, 0.08);
+            background: rgba(139, 174, 102, 0.08);
             border-left-color: #8BAE66;
             transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(139, 174, 102, 0.15);
         }
 
         .nav-item.active {
@@ -148,12 +148,12 @@
         }
 
         .btn-primary {
-            background: #238636;
-            border-color: #238636;
+            background: #628141;
+            border-color: #628141;
         }
 
         .btn-primary:hover {
-            background: #2ea043;
+            background: #628141;
         }
 
         .metrics-grid {
@@ -209,7 +209,7 @@
         }
 
         .change-positive {
-            color: #3fb950;
+            color: #8BAE66;
         }
 
         .change-negative {
@@ -261,7 +261,7 @@
         }
 
         .dot-green {
-            background: #3fb950;
+            background: #8BAE66;
         }
 
         .terminal-body {
@@ -291,7 +291,7 @@
         }
 
         .log-success {
-            color: #3fb950;
+            color: #8BAE66;
         }
 
         .log-error {
@@ -339,7 +339,7 @@
         }
 
         .endpoint-method {
-            background: #238636;
+            background: #628141;
             color: white;
             padding: 4px 10px;
             border-radius: 4px;
@@ -364,7 +364,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #3fb950;
+            background: #8BAE66;
             animation: pulse 2s infinite;
         }
 
@@ -427,8 +427,8 @@
         }
 
         .stage-number.complete {
-            background: #238636;
-            border-color: #238636;
+            background: #628141;
+            border-color: #628141;
         }
 
         .stage-content {
@@ -460,7 +460,7 @@
 
         .loading-progress {
             height: 100%;
-            background: linear-gradient(90deg, #8BAE66, #3fb950);
+            background: linear-gradient(90deg, #8BAE66, #8BAE66);
             width: 0%;
             animation: loading 2s infinite;
         }
@@ -539,7 +539,7 @@
         .explore-card:hover {
             transform: translateY(-8px) scale(1.02);
             border-color: #8BAE66;
-            box-shadow: 0 12px 40px rgba(88, 166, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(139, 174, 102, 0.3);
         }
 
         .explore-card img {
@@ -574,7 +574,7 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(88, 166, 255, 0.9);
+            background: rgba(139, 174, 102, 0.9);
             color: white;
             padding: 6px 14px;
             border-radius: 20px;
@@ -636,7 +636,7 @@
             max-height: 85vh;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 0 50px rgba(88, 166, 255, 0.5);
+            box-shadow: 0 0 50px rgba(139, 174, 102, 0.5);
         }
 
         .lightbox-caption {
@@ -678,7 +678,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(88, 166, 255, 0.8);
+            background: rgba(139, 174, 102, 0.8);
             color: white;
             border: none;
             width: 50px;
@@ -778,7 +778,7 @@
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-label">Application Status</span>
-                        <i class="fas fa-server metric-icon" style="color: #3fb950;"></i>
+                        <i class="fas fa-server metric-icon" style="color: #8BAE66;"></i>
                     </div>
                     <div class="metric-value" id="appStatus">Checking...</div>
                     <div class="metric-change change-positive">
@@ -962,7 +962,7 @@
                 <div class="endpoint-card">
                     <div class="endpoint-header" onclick="toggleEndpoint('pipeline-trigger')">
                         <div class="endpoint-info">
-                            <span class="endpoint-method" style="background: #da3633;">POST</span>
+                            <span class="endpoint-method" style="background: #628141;">POST</span>
                             <span class="endpoint-path">/api/pipeline/trigger</span>
                         </div>
                         <div class="endpoint-status">
@@ -1335,7 +1335,7 @@
             if (result.success) {
                 const modeIndicator = result.demo ? '<span style="color: #d29922;">(Demo Mode)</span>' : '';
                 document.getElementById(responseId).innerHTML = `
-                    <div style="color: #3fb950; margin-bottom: 10px;">
+                    <div style="color: #8BAE66; margin-bottom: 10px;">
                         <i class="fas fa-check-circle"></i> 200 OK (${duration}ms) ${modeIndicator}
                     </div>
                     <pre>${formatJSON(result.data)}</pre>
@@ -1367,7 +1367,7 @@
 
             if (result.success) {
                 const statusText = result.demo ? 'Demo Mode' : 'Online';
-                const statusColor = result.demo ? '#d29922' : '#3fb950';
+                const statusColor = result.demo ? '#d29922' : '#8BAE66';
 
                 document.getElementById('appStatus').innerHTML =
                     `<span style="color: ${statusColor}">${statusText}</span>`;
@@ -1506,7 +1506,7 @@
                 } else if (data.status === 'SUCCESS') {
                     updatePipelineUI(data);
                     document.getElementById('pipelineStatusText').innerHTML =
-                        `<span style="color: #3fb950;"><i class="fas fa-check-circle"></i> Pipeline completed successfully!</span>`;
+                        `<span style="color: #8BAE66;"><i class="fas fa-check-circle"></i> Pipeline completed successfully!</span>`;
                     addLog('✓ Pipeline execution completed successfully', 'success');
                     stopPipelinePolling();
                 } else if (data.status === 'FAILED') {
@@ -1546,7 +1546,7 @@
                 const duration = Date.now() - startTime;
 
                 document.getElementById('pipeline-trigger-response').innerHTML = `
-                    <div style="color: ${data.success ? '#3fb950' : '#8BAE66'}; margin-bottom: 10px;">
+                    <div style="color: ${data.success ? '#8BAE66' : '#8BAE66'}; margin-bottom: 10px;">
                         <i class="fas fa-${data.success ? 'check-circle' : 'times-circle'}"></i> ${response.status} (${duration}ms)
                     </div>
                     <pre>${formatJSON(data)}</pre>
@@ -1656,6 +1656,7 @@
 </body>
 
 </html>
+
 
 
 
